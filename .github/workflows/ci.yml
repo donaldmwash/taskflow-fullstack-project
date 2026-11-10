@@ -39,9 +39,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
       - name: Install dependencies
         run: npm install
+      - name: Prepare CI environment file
+        run: printf 'DATABASE_URL="%s"\nJWT_SECRET="%s"\nAPI_PORT="%s"\nWEB_ORIGIN="%s"\nNODE_ENV="%s"\n' "$DATABASE_URL" "$JWT_SECRET" "$API_PORT" "$WEB_ORIGIN" "$NODE_ENV" > .env
       - name: Generate Prisma client
         run: npm run db:generate
       - name: Apply database migrations
