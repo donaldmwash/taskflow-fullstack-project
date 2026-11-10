@@ -1,0 +1,15 @@
+{
+  "name": "taskflow-fullstack",
+  "private": true,
+  "workspaces": ["apps/api", "apps/web"],
+  "scripts": {
+    "dev": "concurrently -k -n API,WEB \"npm run dev -w apps/api\" \"npm run dev -w apps/web\"",
+    "build": "npm run build --workspaces --if-present",
+    "test": "npm run test -w apps/api",
+    "db:generate": "npm run db:generate -w apps/api",
+    "db:migrate": "npm run db:migrate -w apps/api"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
