@@ -1,5 +1,7 @@
 # TaskFlow — Full-Stack Task Workspace
 
+![TaskFlow CI](https://github.com/donaldmwash/taskflow-fullstack-project/actions/workflows/ci.yml/badge.svg)
+
 TaskFlow is a full-stack task management application with account registration, private workspaces and persistent task management. Users can create tasks, set priorities and due dates, update progress, search their work and keep a focused view of what remains.
 
 The project is structured as a small monorepo: a React client and an Express API backed by PostgreSQL.
