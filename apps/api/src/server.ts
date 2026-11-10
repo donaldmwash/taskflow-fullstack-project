@@ -59,6 +59,10 @@ function readSession(request: express.Request): Session | null {
   }
 }
 
+function routeParam(value: string | string[] | undefined): string {
+  return Array.isArray(value) ? value[0] ?? "" : value ?? "";
+}
+
 function asyncRoute(
   handler: (request: express.Request, response: express.Response) => Promise<unknown>
 ) {
@@ -201,7 +205,7 @@ app.patch("/api/tasks/:id", asyncRoute(async (request, response) => {
   const input = updateTaskSchema.parse(request.body);
   const session = response.locals.session as Session;
   const existingTask = await prisma.task.findFirst({
-    where: { id: request.params.id, workspaceId: session.workspaceId },
+    where: { id: routeParam(request.params.id), workspaceId: session.workspaceId },
     select: { id: true }
   });
 
@@ -227,7 +231,7 @@ app.patch("/api/tasks/:id", asyncRoute(async (request, response) => {
 app.delete("/api/tasks/:id", asyncRoute(async (request, response) => {
   const session = response.locals.session as Session;
   const task = await prisma.task.findFirst({
-    where: { id: request.params.id, workspaceId: session.workspaceId },
+    where: { id: routeParam(request.params.id), workspaceId: session.workspaceId },
     select: { id: true }
   });
 
