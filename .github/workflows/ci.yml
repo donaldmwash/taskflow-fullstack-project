@@ -1,0 +1,52 @@
+name: TaskFlow CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: taskflow
+          POSTGRES_PASSWORD: taskflow
+          POSTGRES_DB: taskflow
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U taskflow -d taskflow"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: postgresql://taskflow:taskflow@localhost:5432/taskflow?schema=public
+      JWT_SECRET: ci-only-secret-that-is-long-enough-for-validation
+      API_PORT: 4000
+      WEB_ORIGIN: http://localhost:5173
+      NODE_ENV: test
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - name: Install dependencies
+        run: npm install
+      - name: Generate Prisma client
+        run: npm run db:generate
+      - name: Apply database migrations
+        run: npm run db:migrate
+      - name: Run API validation tests
+        run: npm test
+      - name: Build both applications
+        run: npm run build
